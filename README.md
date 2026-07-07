@@ -255,6 +255,25 @@ jasypt-go encrypt input="Sensitive Data" password="mySecretKey" \
 jasypt-go encrypt input="Hello" password="secret" stringOutputType=hexadecimal
 ```
 
+> **⚠️ 注意事项：bash 特殊字符转义**
+>
+> 当明文或密码中包含 bash 特殊字符（`!` `#` `$` `\` `` ` `` `"` 等）时，**必须用单引号 `'...'` 包裹**，否则会被 bash 错误解析：
+>
+> ```bash
+> # ❌ 错误：! 和 # 被 bash 拦截
+> jasypt-go encrypt input="admin@1!.-/#" password="xxx"
+> #                                  ↑ 从这里开始全被当成注释
+>
+> # ✅ 正确：单引号内所有字符都是字面量
+> jasypt-go encrypt input='admin@1!.-/#' password="xxx"
+> ```
+>
+> | 明文包含 | 推荐写法 | 原因 |
+> |---------|---------|------|
+> | 普通字符 | `input="hello"` | 双引号即可 |
+> | `!` `#` `$` `\` `` ` `` | `input='...'` | 单引号阻止所有展开 |
+> | 含单引号 `'` | `input="it's"` | 双引号保护单引号 |
+
 ### Go API
 
 ```go
