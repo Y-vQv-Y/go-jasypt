@@ -19,24 +19,94 @@
 
 ---
 
-## Installation
+## 项目独立性
 
-### CLI Binary
+`go-jasypt` 是**完全自包含**的项目，不依赖同目录下的 Java 项目或任何本地外部文件。
 
-```bash
-# Build from source
-git clone https://github.com/go-jasypt/jasypt.git
-cd jasypt
-go build -o jasypt-go ./cmd/jasypt
+```
+go-jasypt/
+  ├── go.mod          ← 仅依赖 golang.org/x/crypto + golang.org/x/text
+  ├── go.sum
+  ├── *.go            ← 所有 import 均为模块内部路径或标准库
+  └── ...
 ```
 
-### Go Library
+- ✅ 无 `replace` 指令指向本地路径
+- ✅ 无 `../` 相对路径引用
+- ✅ 可直接推送到 Git 仓库独立使用
+
+---
+
+## Installation
+
+**Requirements:** Go 1.21+
+
+### 方式一：作为 Go Library 引入（代码中调用）
+
+在你的 Go 项目 `go.mod` 中添加依赖：
 
 ```bash
 go get github.com/go-jasypt/jasypt
 ```
 
-**Requirements:** Go 1.21+ (only standard library + `golang.org/x/crypto` + `golang.org/x/text`)
+然后在代码中 import：
+
+```go
+import (
+    "github.com/go-jasypt/jasypt/pbe"
+    "github.com/go-jasypt/jasypt/iv"
+    "github.com/go-jasypt/jasypt/salt"
+    "github.com/go-jasypt/jasypt/text"      // 便捷加密器
+)
+```
+
+### 方式二：编译 CLI 二进制文件
+
+```bash
+# 克隆仓库
+git clone https://github.com/go-jasypt/jasypt.git
+cd jasypt
+
+# 当前平台编译
+go build -o jasypt-go ./cmd/jasypt
+
+# ─── 交叉编译其他平台 ─────────────────────────
+
+# Linux (amd64)
+GOOS=linux   GOARCH=amd64 go build -o jasypt-go-linux       ./cmd/jasypt
+
+# Linux (arm64)
+GOOS=linux   GOARCH=arm64 go build -o jasypt-go-linux-arm64 ./cmd/jasypt
+
+# macOS (Intel)
+GOOS=darwin  GOARCH=amd64 go build -o jasypt-go-darwin      ./cmd/jasypt
+
+# macOS (Apple Silicon)
+GOOS=darwin  GOARCH=arm64 go build -o jasypt-go-darwin-arm64 ./cmd/jasypt
+
+# Windows (amd64)
+GOOS=windows GOARCH=amd64 go build -o jasypt-go.exe         ./cmd/jasypt
+
+# ─── 一键编译所有平台 (Bash) ──────────────────
+
+#!/bin/bash
+for os in linux darwin windows; do
+    for arch in amd64 arm64; do
+        [ "$os" = "windows" ] && ext=".exe" || ext=""
+        GOOS=$os GOARCH=$arch go build -o "jasypt-go-${os}-${arch}${ext}" ./cmd/jasypt
+    done
+done
+```
+
+编译产物复制到目标服务器后直接使用：
+
+```bash
+# Linux 服务器
+chmod +x jasypt-go-linux
+./jasypt-go-linux encrypt input="hello" password="secret"
+```
+
+> **注意：** 不要在 Windows 上编译 `.exe` 然后直接复制到 Linux 运行，会报 `Exec format error`。请使用上面的交叉编译命令。
 
 ---
 
