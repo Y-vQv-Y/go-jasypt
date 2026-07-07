@@ -273,6 +273,24 @@ jasypt-go encrypt input="Hello" password="secret" stringOutputType=hexadecimal
 > | 普通字符 | `input="hello"` | 双引号即可 |
 > | `!` `#` `$` `\` `` ` `` | `input='...'` | 单引号阻止所有展开 |
 > | 含单引号 `'` | `input="it's"` | 双引号保护单引号 |
+> | **单引号 + 特殊字符** | 见下方 | 需特殊处理 |
+>
+> **密码同时包含单引号 `'` 和特殊字符（如 `!` `#`）时：**
+>
+> ```bash
+> # 假设密码为: P@ss'word!.#/
+>
+> # ─── 方案一: ANSI-C 引用（bash 推荐）───
+> jasypt-go encrypt input='hello' password=$'P@ss\'word!.#/'
+>
+> # ─── 方案二: 单引号拼接法（兼容所有 POSIX shell）───
+> # '\'' = 结束单引号 → 转义单引号 → 重新开始单引号
+> jasypt-go encrypt input='hello' password='P@ss'\''word!.#/'
+>
+> # ─── 方案三: 环境变量（适合脚本）───
+> read -r -s PASS          # -s 不显示输入内容
+> jasypt-go encrypt input='hello' password="$PASS"
+> ```
 
 ### Go API
 
