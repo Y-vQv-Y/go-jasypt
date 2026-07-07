@@ -5,11 +5,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-jasypt/jasypt/encoding"
-	"github.com/go-jasypt/jasypt/iv"
-	"github.com/go-jasypt/jasypt/pbe"
-	"github.com/go-jasypt/jasypt/salt"
-	"github.com/go-jasypt/jasypt/text"
+	"github.com/Y-vQv-Y/go-jasypt/encoding"
+	"github.com/Y-vQv-Y/go-jasypt/iv"
+	"github.com/Y-vQv-Y/go-jasypt/pbe"
+	"github.com/Y-vQv-Y/go-jasypt/salt"
+	"github.com/Y-vQv-Y/go-jasypt/text"
 )
 
 // TestPBKDF1KeyDerivation verifies the PKCS#5 PBKDF1 key derivation

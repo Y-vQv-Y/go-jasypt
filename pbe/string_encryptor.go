@@ -3,7 +3,7 @@ package pbe
 import (
 	"fmt"
 
-	"github.com/go-jasypt/jasypt/encoding"
+	"github.com/Y-vQv-Y/go-jasypt/encoding"
 )
 
 // StringEncryptor encrypts and decrypts string messages.

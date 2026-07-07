@@ -25,10 +25,17 @@
 
 ```
 go-jasypt/
-  ├── go.mod          ← 仅依赖 golang.org/x/crypto + golang.org/x/text
-  ├── go.sum
-  ├── *.go            ← 所有 import 均为模块内部路径或标准库
-  └── ...
+├── cmd/
+│   └── jasypt/          ← CLI 入口 (main.go)
+├── encoding/            ← Base64 / Hex 编解码
+├── iv/                  ← IV 生成器 (Random / NoIv / Fixed)
+├── pbe/                 ← 核心加密引擎 (PBKDF1/PBKDF2 + CBC)
+├── salt/                ← Salt 生成器 (Random / Fixed / Zero)
+├── text/                ← 便捷加密器 (Basic / Strong)
+├── util/                ← Unicode NFC 规范化
+├── go.mod               ← 仅依赖 golang.org/x/crypto + golang.org/x/text
+├── go.sum
+└── compat_test.go       ← 跨语言兼容性测试
 ```
 
 - ✅ 无 `replace` 指令指向本地路径
@@ -60,12 +67,128 @@ import (
 )
 ```
 
-### 方式二：编译 CLI 二进制文件
+### 方式二：Go 代码直接调用
+
+在 `go.mod` 所在目录执行：
+
+```bash
+go get github.com/Y-vQv-Y/go-jasypt
+```
+
+#### CLI 等价 Go 代码（加密）
+
+```bash
+# CLI 命令
+./jasypt-go encrypt input="明文" password="PILLAR-PLUS-SECRET" \
+    algorithm=PBEWITHHMACSHA512ANDAES_256 \
+    keyObtentionIterations=1000 \
+    ivGeneratorClassName=RandomIvGenerator \
+    saltGeneratorClassName=RandomSaltGenerator
+```
+
+对应的 Go 代码：
+
+```go
+import (
+    "fmt"
+
+    "github.com/Y-vQv-Y/go-jasypt/iv"
+    "github.com/Y-vQv-Y/go-jasypt/pbe"
+    "github.com/Y-vQv-Y/go-jasypt/salt"
+)
+
+func encryptExample() {
+    config := &pbe.Config{
+        Algorithm:              "PBEWITHHMACSHA512ANDAES_256",
+        Password:               "PILLAR-PLUS-SECRET",
+        KeyObtentionIterations: 1000,
+        SaltGenerator:          salt.NewRandomGenerator(),
+        IvGenerator:            iv.NewRandomGenerator(),
+        StringOutputType:       "base64",
+    }
+
+    enc, _ := pbe.NewStringEncryptor(config)
+    encrypted, _ := enc.Encrypt("明文")
+    fmt.Println(encrypted) // Base64 密文 → 传给 Java 解密
+}
+```
+
+#### CLI 等价 Go 代码（解密）
+
+```bash
+# CLI 命令
+./jasypt-go decrypt input="base64密文" password="PILLAR-PLUS-SECRET" \
+    algorithm=PBEWITHHMACSHA512ANDAES_256 \
+    keyObtentionIterations=1000 \
+    ivGeneratorClassName=RandomIvGenerator \
+    saltGeneratorClassName=RandomSaltGenerator
+```
+
+对应的 Go 代码：
+
+```go
+func decryptExample(encryptedBase64 string) {
+    config := &pbe.Config{
+        Algorithm:              "PBEWITHHMACSHA512ANDAES_256",
+        Password:               "PILLAR-PLUS-SECRET",
+        KeyObtentionIterations: 1000,
+        SaltGenerator:          salt.NewRandomGenerator(),
+        IvGenerator:            iv.NewRandomGenerator(),
+        StringOutputType:       "base64",
+    }
+
+    enc, _ := pbe.NewStringEncryptor(config)
+    decrypted, _ := enc.Decrypt(encryptedBase64)
+    fmt.Println(decrypted) // "明文" → 与 Java 加密的结果一致
+}
+```
+
+> **参数对照表：**
+>
+> | CLI 参数 | Go Config 字段 |
+> |----------|---------------|
+> | `algorithm=PBEWITHHMACSHA512ANDAES_256` | `Algorithm: "PBEWITHHMACSHA512ANDAES_256"` |
+> | `password="..."` | `Password: "..."` |
+> | `keyObtentionIterations=1000` | `KeyObtentionIterations: 1000` |
+> | `ivGeneratorClassName=RandomIvGenerator` | `IvGenerator: iv.NewRandomGenerator()` |
+> | `saltGeneratorClassName=RandomSaltGenerator` | `SaltGenerator: salt.NewRandomGenerator()` |
+> | `stringOutputType=base64` | `StringOutputType: "base64"` |
+
+#### 更多示例
+
+```go
+// ─── 示例 1: 最简方式（PBEWithMD5AndDES，默认随机盐）───
+config := pbe.DefaultConfig()
+config.Password = "mySecretKey"
+
+enc, _ := pbe.NewStringEncryptor(config)
+encrypted, _ := enc.Encrypt("Hello World")
+decrypted, _ := enc.Decrypt(encrypted)
+
+fmt.Println(encrypted) // Base64 密文（每次不同，因为随机盐）
+fmt.Println(decrypted) // "Hello World"
+
+// ─── 示例 2: 便捷方式（BasicTextEncryptor）───
+import "github.com/Y-vQv-Y/go-jasypt/text"
+
+basic := text.NewBasicTextEncryptor()
+basic.SetPassword("password")
+result, _ := basic.Encrypt("hello")
+original, _ := basic.Decrypt(result)
+fmt.Println(original) // "hello"
+```
+
+```bash
+# 运行
+go run main.go
+```
+
+### 方式三：编译 CLI 二进制文件
 
 ```bash
 # 克隆仓库
-git clone https://github.com/go-jasypt.git
-cd jasypt
+git clone https://github.com/Y-vQv-Y/go-jasypt.git
+cd go-jasypt
 
 # 当前平台编译
 go build -o jasypt-go ./cmd/jasypt

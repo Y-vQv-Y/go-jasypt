@@ -3,7 +3,7 @@
 package text
 
 import (
-	"github.com/go-jasypt/jasypt/pbe"
+	"github.com/Y-vQv-Y/go-jasypt/pbe"
 )
 
 // BasicTextEncryptor is a convenience encryptor pre-configured with PBEWithMD5AndDES.

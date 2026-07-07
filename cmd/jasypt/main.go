@@ -27,9 +27,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-jasypt/jasypt/iv"
-	"github.com/go-jasypt/jasypt/pbe"
-	"github.com/go-jasypt/jasypt/salt"
+	"github.com/Y-vQv-Y/go-jasypt/iv"
+	"github.com/Y-vQv-Y/go-jasypt/pbe"
+	"github.com/Y-vQv-Y/go-jasypt/salt"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/go-jasypt/jasypt
+module github.com/Y-vQv-Y/go-jasypt
 
 go 1.25.0
 

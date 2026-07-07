@@ -1,7 +1,7 @@
 package text
 
 import (
-	"github.com/go-jasypt/jasypt/pbe"
+	"github.com/Y-vQv-Y/go-jasypt/pbe"
 )
 
 // StrongTextEncryptor is a convenience encryptor pre-configured with PBEWithMD5AndTripleDES.

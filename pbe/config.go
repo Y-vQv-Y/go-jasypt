@@ -3,8 +3,8 @@ package pbe
 import (
 	"fmt"
 
-	"github.com/go-jasypt/jasypt/iv"
-	"github.com/go-jasypt/jasypt/salt"
+	"github.com/Y-vQv-Y/go-jasypt/iv"
+	"github.com/Y-vQv-Y/go-jasypt/salt"
 )
 
 // Config holds the configuration for a PBE encryptor,

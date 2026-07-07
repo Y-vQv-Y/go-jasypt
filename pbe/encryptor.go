@@ -6,9 +6,9 @@ import (
 	"crypto/rand"
 	"fmt"
 
-	"github.com/go-jasypt/jasypt/encoding"
-	"github.com/go-jasypt/jasypt/salt"
-	"github.com/go-jasypt/jasypt/util"
+	"github.com/Y-vQv-Y/go-jasypt/encoding"
+	"github.com/Y-vQv-Y/go-jasypt/salt"
+	"github.com/Y-vQv-Y/go-jasypt/util"
 )
 
 // ByteEncryptor is the core PBE byte-level encryptor.
