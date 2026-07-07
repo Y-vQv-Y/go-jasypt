@@ -46,17 +46,17 @@ go-jasypt/
 在你的 Go 项目 `go.mod` 中添加依赖：
 
 ```bash
-go get github.com/go-jasypt/jasypt
+go get github.com/Y-vQv-Y/go-jasypt
 ```
 
 然后在代码中 import：
 
 ```go
 import (
-    "github.com/go-jasypt/jasypt/pbe"
-    "github.com/go-jasypt/jasypt/iv"
-    "github.com/go-jasypt/jasypt/salt"
-    "github.com/go-jasypt/jasypt/text"      // 便捷加密器
+    "github.com/Y-vQv-Y/go-jasypt/pbe"
+    "github.com/Y-vQv-Y/go-jasypt/iv"
+    "github.com/Y-vQv-Y/go-jasypt/salt"
+    "github.com/Y-vQv-Y/go-jasypt/text"      // 便捷加密器
 )
 ```
 
@@ -64,7 +64,7 @@ import (
 
 ```bash
 # 克隆仓库
-git clone https://github.com/go-jasypt/jasypt.git
+git clone https://github.com/go-jasypt.git
 cd jasypt
 
 # 当前平台编译
@@ -139,9 +139,9 @@ package main
 
 import (
     "fmt"
-    "github.com/go-jasypt/jasypt/iv"
-    "github.com/go-jasypt/jasypt/pbe"
-    "github.com/go-jasypt/jasypt/salt"
+    "github.com/Y-vQv-Y/go-jasypt/iv"
+    "github.com/Y-vQv-Y/go-jasypt/pbe"
+    "github.com/Y-vQv-Y/go-jasypt/salt"
 )
 
 func main() {
@@ -176,7 +176,7 @@ func main() {
 ### Using Convenience Encryptors (like jasypt's `util.text`)
 
 ```go
-import "github.com/go-jasypt/jasypt/text"
+import "github.com/Y-vQv-Y/go-jasypt/text"
 
 // BasicTextEncryptor — PBEWithMD5AndDES
 basic := text.NewBasicTextEncryptor()
